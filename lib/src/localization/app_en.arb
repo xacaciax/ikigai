@@ -1,0 +1,6 @@
+{
+  "appTitle": "ikigai_advisor",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}
