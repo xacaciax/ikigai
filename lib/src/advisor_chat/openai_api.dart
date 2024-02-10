@@ -12,7 +12,6 @@ import '../models/completions/enums/roles.dart';
 import '../models/completions/request/chat_completion_request.dart';
 import '../models/completions/request/request_message.dart';
 import '../models/completions/response/chat_completion_response.dart';
-import '../models/completions/response/chat_completion_response_sse.dart';
 import '../models/http_header.dart';
 
 class StreamItem {
@@ -39,10 +38,6 @@ class StreamItem {
   }
 }
 
-// Although there is a ChatGPT Flutter SDK available, I will use the HTTP API for
-// this project because considering we are still running a lot of tests and experiments,
-// it may provide more granular flexibility and control over the requests and responses while avoiding
-// the overhead of a third-party SDK.
 class OpenAI {
   final String apiKey = dotenv.env['OPENAI_API_KEY'] as String;
   final String apiUrl = dotenv.env['OPENAI_COMPLETIONS_URL'] as String;
@@ -109,7 +104,8 @@ class OpenAI {
       model: Gpt41106PreviewChatModel(),
       responseFormat: ResponseFormat.jsonObject,
       messages: messages,
-      maxToken: 300,
+      // Enough tokens to ensure the complete JSON response is returned.
+      maxToken: 400,
       // This is the recommended temperature for JSON responses as we need accuracy to be high.
       temperature: 1.0,
     );
@@ -137,7 +133,6 @@ class OpenAI {
     }
   }
 
-  /// Admin only request that takes
   Future<String?> requestSummaryCompletion({
     required String userPrompt,
     required String systemPrompt,

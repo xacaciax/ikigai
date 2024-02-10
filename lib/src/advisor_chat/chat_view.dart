@@ -9,7 +9,7 @@ import '../models/chat_suggestion.dart';
 // import '../user_repo/user_repo.dart';
 import 'advisory_phases.dart';
 import 'advisory_prompts.dart';
-import 'message_types/chat_message.dart';
+import 'chat_types/chat_message.dart';
 import 'chat_widgets/checklist_select_survey.dart';
 import 'chat_widgets/contact_card.dart';
 import 'chat_widgets/three_option_survey.dart';
