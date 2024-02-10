@@ -1,7 +1,39 @@
 # Ikigai Advisor
 
-Ikigai Advisor is a simple Flutter app providing a chatbot ikigai advisor via ChatGPT.
+Ikigai Advisor is a Flutter application that helps users explor career options.
 
-The word ikigai means to have a purpose in life. The reasion you wake up each working day excited to do something. When you have a purpose, you won't feel lazy or unmotivated.
+## Features
 
+- Interactive survey to understand user's interests and passions
+- Personalized advice based on user's responses
+- Simple chat dialogue user interface
 
+## Installation
+
+To install the application, follow these steps:
+
+1. Clone the repository: `git clone https://github.com/yourusername/ikigai-advisor.git`
+2. Navigate into the project directory: `cd ikigai-advisor`
+3. Install the dependencies: `flutter pub get`
+4. Run the application: `flutter run`
+
+## Configure
+
+This repo uses flutter_dotenv to store environment variables. For the app to successfully connect to OpenAI, you will need create a .env file in the root directory and add your ChatGPT API key.
+
+ikigai-advisor/.env
+
+```
+
+OPENAI_API_KEY=<YOUR_API_KEY_HERE>
+OPENAI_COMPLETIONS_URL=https://api.openai.com/v1/chat/completions
+
+```
+
+## Attributions
+
+Models from https://github.com/redevrx/chat_gpt_sdk/tree/main/lib/src/model/chat_complete
+
+## License
+
+This project is licensed under the terms of the [MIT License](LICENSE).
