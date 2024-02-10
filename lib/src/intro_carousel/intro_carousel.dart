@@ -1,6 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:lottie/lottie.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class CarouselPage extends StatefulWidget {
   static const routeName = '/intro';
@@ -9,7 +11,7 @@ class CarouselPage extends StatefulWidget {
 }
 
 class _CarouselPageState extends State<CarouselPage> {
-  final PageController _pageController = PageController(initialPage: 0);
+  PageController _pageController = PageController(initialPage: 0);
 
   final RichText text1 = RichText(
     text: TextSpan(
@@ -89,15 +91,39 @@ class _CarouselPageState extends State<CarouselPage> {
             style: TextStyle(fontWeight: FontWeight.bold)),
         TextSpan(
             text:
-                ' is here to help you discover different career options based on your unique interests, passions, and capabilities.\n\n'
-                'It will ask you some questions about yourself and based on the answers, suggest different career options.\n\n'
+                ' helps you discover different career options based on your unique interests, passions, and capabilities.\n\n'
+                'It will ask you some questions about yourself and based on the answers suggest different career options.\n\n'
                 'The goal is to explore a first next step that fits who you are.\n\n'),
+      ],
+    ),
+  );
+
+  final introHeading = RichText(
+    text: TextSpan(
+      style: const TextStyle(
+        fontSize: 24.0,
+        color: Colors.black,
+      ),
+      children: <TextSpan>[
+        TextSpan(
+          text: 'Welcome to\n',
+        ),
+        TextSpan(
+            text: 'IKIGAI Advisor',
+            style: TextStyle(fontWeight: FontWeight.bold)),
       ],
     ),
   );
 
   void _nextPage() {
     _pageController.nextPage(
+      duration: Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _prevPage() {
+    _pageController.previousPage(
       duration: Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
@@ -110,39 +136,28 @@ class _CarouselPageState extends State<CarouselPage> {
   Widget page(
       {required RichText text,
       required String lottiePath,
-      required String buttonText,
-      String? heading,
+      String? buttonText,
+      RichText? heading,
       VoidCallback? buttonCallback}) {
-    // Sizes for responsive sizing if needed
-    // final screenSize = MediaQuery.of(context).size;
-    // final screenWidth = screenSize.width;
-    // final screenHeight = screenSize.height;
-
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         if (heading != null)
-          Text(heading, style: Theme.of(context).textTheme.headlineMedium),
-        if (heading != null)
-          SizedBox(
-            height: 30,
+          Padding(
+            padding: EdgeInsets.only(top: 30),
+            child: heading,
           ),
         Lottie.asset(
           lottiePath,
         ),
         Center(
-          child: Padding(padding: EdgeInsets.all(30), child: text),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue.shade100,
-            textStyle: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-          onPressed: buttonCallback ?? _nextPage,
-          child: Text(buttonText),
+          child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Padding(
+                  padding: EdgeInsets.only(
+                    left: 20,
+                  ),
+                  child: text)),
         ),
       ],
     );
@@ -151,7 +166,9 @@ class _CarouselPageState extends State<CarouselPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
             child: PageView(
@@ -161,7 +178,7 @@ class _CarouselPageState extends State<CarouselPage> {
                   text: text1,
                   lottiePath: 'assets/lotties/boat.json',
                   buttonText: 'Next',
-                  heading: 'Welcome to\nIkigai Advisor',
+                  heading: introHeading,
                 ),
                 page(
                   text: text2,
@@ -177,6 +194,32 @@ class _CarouselPageState extends State<CarouselPage> {
               ],
             ),
           ),
+          SmoothPageIndicator(
+            controller: _pageController,
+            count: 3,
+            effect: ScrollingDotsEffect(
+              dotColor: Colors.orange.shade600,
+              activeDotColor: Colors.orange.shade800,
+              dotHeight: 14,
+              dotWidth: 14,
+            ),
+          ),
+          SizedBox(
+            height: 40,
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              textStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            onPressed: navToChat,
+            child: Text('Start Chat'),
+          ),
+          SizedBox(
+            height: 30,
+          )
         ],
       ),
     );

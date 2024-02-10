@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-enum SurveyResponses { yes, almost, no }
+enum ThreeOptions { yes, almost, no }
 
-class SurveyQuestionCard extends StatefulWidget {
+class ThreeOptionsCard extends StatefulWidget {
   final String messageContent;
   final Function(String) handleResponseCallback;
 
-  const SurveyQuestionCard({
+  const ThreeOptionsCard({
     Key? key,
     required this.messageContent,
     required this.handleResponseCallback,
   }) : super(key: key);
 
   @override
-  _SurveyQuestionCardState createState() => _SurveyQuestionCardState();
+  _ThreeOptionsCardState createState() => _ThreeOptionsCardState();
 }
 
-class _SurveyQuestionCardState extends State<SurveyQuestionCard> {
+class _ThreeOptionsCardState extends State<ThreeOptionsCard> {
   String? _selectedResponse;
   bool _isButtonDisabled = false;
 
@@ -43,7 +43,7 @@ class _SurveyQuestionCardState extends State<SurveyQuestionCard> {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: SurveyResponses.values
+              children: ThreeOptions.values
                   .map((response) => _buildOptionButton(
                       context, response.name, response == _selectedResponse))
                   .toList(),

@@ -109,7 +109,7 @@ class OpenAI {
       model: Gpt41106PreviewChatModel(),
       responseFormat: ResponseFormat.jsonObject,
       messages: messages,
-      maxToken: 200,
+      maxToken: 300,
       // This is the recommended temperature for JSON responses as we need accuracy to be high.
       temperature: 1.0,
     );

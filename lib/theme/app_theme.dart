@@ -31,11 +31,25 @@ ThemeData buildThemeData() {
         fontSize: 22.0,
       ),
     ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        primary: Colors.lightBlue,
+        onPrimary: Colors.white,
+        textStyle: TextStyle(
+          color: Colors.orange,
+          fontSize: 18.0,
+          fontWeight: FontWeight.bold,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+      ),
+    ),
     buttonTheme: ButtonThemeData(
-      buttonColor: Color(0xFF2196F3), // Bright blue
-      textTheme: ButtonTextTheme.primary,
+      buttonColor: Color.fromARGB(255, 6, 88, 155), // Bright blue
+      textTheme: ButtonTextTheme.normal,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(5.0),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(

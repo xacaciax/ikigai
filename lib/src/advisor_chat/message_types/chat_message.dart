@@ -3,7 +3,7 @@ class ChatMessage {
   String messageContent;
   String timestamp;
   bool isMe;
-  bool isJson;
+
   bool isContactCard;
   bool isOptionsSurvey;
   bool isListOptions;
@@ -15,7 +15,6 @@ class ChatMessage {
     required this.messageContent,
     required this.timestamp,
     required this.isMe,
-    required this.isJson,
     this.isOptionsSurvey = false,
     this.isContactCard = false,
     this.isListOptions = false,
