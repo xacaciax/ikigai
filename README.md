@@ -1,6 +1,6 @@
 # Ikigai Advisor
 
-Ikigai Advisor is an iOS Flutter application using the ChatGPT api to helps high school students understand themselves better and explore careers.
+Ikigai Advisor is an iOS Flutter application using the ChatGPT api to help high school students understand themselves better and explore career options.
 
 ## Features
 
