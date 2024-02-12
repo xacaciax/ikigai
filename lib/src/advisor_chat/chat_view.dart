@@ -73,7 +73,7 @@ class _ChatViewState extends State<ChatView> {
 
   @override
   void dispose() {
-    // _openai.dispose();
+    _openai.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -99,13 +99,15 @@ class _ChatViewState extends State<ChatView> {
       // It may be possible this data will not arrive in the shape we expect. There is a way via the openai function_calls
       // to ensure the data here is exactly as we expect. Stretch goal: implement function_calls.
       if (json['generated_suggestions'] != null) {
-        setState(() {
-          messages.add(ChatMessage(
-            messageContent: SUGGESTIONS_INTRO,
-            timestamp: DateFormat('hh:mm a').format(DateTime.now()),
-            isMe: false,
-          ));
-        });
+        if (!suggestionsProvided) {
+          setState(() {
+            messages.add(ChatMessage(
+              messageContent: SUGGESTIONS_INTRO,
+              timestamp: DateFormat('hh:mm a').format(DateTime.now()),
+              isMe: false,
+            ));
+          });
+        }
         String forSummaries = '';
         final options = json['generated_suggestions'] as List;
         for (var e in options) {
@@ -197,7 +199,9 @@ class _ChatViewState extends State<ChatView> {
   void checkIn() {
     setState(() {
       messages.add(ChatMessage(
-        messageContent: SURVEY_TEXT,
+        messageContent: suggestionsProvided
+            ? 'Are you ready for some more career suggestions?'
+            : SURVEY_TEXT,
         timestamp: DateFormat('hh:mm a').format(DateTime.now()),
         isMe: true,
         isOptionsSurvey: true,
@@ -371,7 +375,7 @@ class _ChatViewState extends State<ChatView> {
             'Ikigai Advisor Chat',
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          automaticallyImplyLeading: true,
+          automaticallyImplyLeading: false,
         ),
         body: Column(
           children: <Widget>[
