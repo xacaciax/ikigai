@@ -1,6 +1,6 @@
 # Ikigai Advisor
 
-Ikigai Advisor is an iOS Flutter application using the ChatGPT api to helps high school students understand themselves better and explore careers.
+Ikigai Advisor is an iOS Flutter application using the ChatGPT api to help high school students understand themselves better and explore career options.
 
 ## Features
 
@@ -19,7 +19,7 @@ To install the application, follow these steps:
 
 ## Configure
 
-This repo uses flutter_dotenv to store environment variables. For the app to successfully connect to OpenAI, you will need create a .env file in the root directory and add your ChatGPT API key.
+This repo uses [flutter_dotenv](https://pub.dev/packages/flutter_dotenv) to store environment variables. For the app to successfully connect to OpenAI, you will need create a .env file in the root directory and add your ChatGPT API key.
 
 ikigai-advisor/.env
 
