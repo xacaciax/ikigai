@@ -212,6 +212,12 @@ class _ChatViewState extends State<ChatView> {
   /// Orchestrates the survey phase of the conversation, based on [_surveyCount] displays 1 of 3 dynamic surveys and
   /// saves results to [_surveyResults] for future use as additional context to be added to [summaries]
   void surveyHandler(List<String> selectedOptions) {
+    final String surveyResults = _surveyResults.map((r) => r).join(' ');
+    final String allMessages =
+        messages.map((message) => message.messageContent).join(' ');
+    final context = summaries.isEmpty
+        ? allMessages + surveyResults
+        : summaries + surveyResults;
     if (_surveyCount > 0) {
       switch (_surveyCount) {
         case 3:
@@ -224,16 +230,17 @@ class _ChatViewState extends State<ChatView> {
             ));
           });
           _postFrameScrollToBottom(ANIMATED_TEXT_OFFSET);
-          getSurvey(summaries, SurveyType.interests);
+          getSurvey(context, SurveyType.interests);
           break;
         case 2:
-          getSurvey(summaries, SurveyType.strengths);
+          getSurvey(context, SurveyType.strengths);
           break;
         case 1:
+          // For initial career values survey, do not include full context yet so as to start with broad values
           getSurvey(summaries, SurveyType.careerValues);
           break;
         default:
-          getSurvey(summaries, SurveyType.interests);
+          getSurvey(context, SurveyType.interests);
       }
       final String surveyResult = selectedOptions.map((s) => s).join(' ');
       setState(() {
@@ -243,7 +250,6 @@ class _ChatViewState extends State<ChatView> {
 
       /// All surveys have been completed
     } else if (_surveyCount == 0) {
-      final String surveyResults = _surveyResults.map((r) => r).join(' ');
       setState(() {
         _surveyCount = 3;
         discussionPhase = AdvisoryPhase.questions;

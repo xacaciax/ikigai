@@ -35,7 +35,7 @@ const String introduction =
 
 // Questions prompt is used in conjuction with [summaries] in ChatView
 const String questions =
-    'Do not introduce yourself or explain what you can do. Do not suggest careers. I am in high school and need help undestanding my interests, passions, career values, and priorities. Take interest in me and ask me questions. Keep responses to about 50 words. Use my answers to inform your next response. If you ask a question, use the question and my answer to inform your next response. $overallGuiderails';
+    'Do not introduce yourself or explain what you can do. Do not suggest careers. I am in high school and need help undestanding my interests, passions, career values, and priorities. Be informative. Take interest in me and ask me questions. Keep responses under 75 words. Use my answers to inform your next response. If you ask a question, use the question and my answer to inform your next response. $overallGuiderails';
 
 /// Survey Prompts
 const surveyPrefix =
