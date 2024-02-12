@@ -23,7 +23,7 @@ class _CarouselPageState extends State<CarouselPage> {
         TextSpan(
             text: 'IKIGAI ',
             style: const TextStyle(fontWeight: FontWeight.bold)),
-        TextSpan(text: 'means \n\nto do what you '),
+        TextSpan(text: 'means \nto do what you '),
         TextSpan(
             text: 'love\n',
             style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -68,13 +68,13 @@ class _CarouselPageState extends State<CarouselPage> {
             text: 'lifetime', style: TextStyle(fontWeight: FontWeight.bold)),
         TextSpan(
             text:
-                '. \n\nSome careers have predetermined paths, like becoming an astronaut, while others are more unique! \n\nCareers are built '),
+                '. Some careers have predetermined paths, like becoming an astronaut, while others are more unique! \n\nCareers are built '),
         TextSpan(
             text: 'one step at a time',
             style: TextStyle(fontWeight: FontWeight.bold)),
         TextSpan(
             text:
-                '. \n\nIn the process we often don’t know where we will end up.\n'),
+                '. In the process we often don’t know where we will end up.\n'),
       ],
     ),
   );
@@ -150,14 +150,21 @@ class _CarouselPageState extends State<CarouselPage> {
         Lottie.asset(
           lottiePath,
         ),
-        Center(
-          child: Padding(
-              padding: EdgeInsets.all(10),
+        Flexible(
+          child: Center(
+            child: SingleChildScrollView(
+              clipBehavior: Clip.antiAlias,
               child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Padding(
                   padding: EdgeInsets.only(
                     left: 20,
                   ),
-                  child: text)),
+                  child: text,
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -194,6 +201,9 @@ class _CarouselPageState extends State<CarouselPage> {
               ],
             ),
           ),
+          SizedBox(
+            height: 10,
+          ),
           SmoothPageIndicator(
             controller: _pageController,
             count: 3,
@@ -205,7 +215,7 @@ class _CarouselPageState extends State<CarouselPage> {
             ),
           ),
           SizedBox(
-            height: 40,
+            height: 10,
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(

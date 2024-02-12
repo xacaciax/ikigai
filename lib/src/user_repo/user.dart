@@ -1,5 +1,3 @@
-import 'package:ikigai_advisor/src/advisor_chat/advisory_phases.dart';
-
 enum CurrentMode { exploring, planning }
 
 class UserData {

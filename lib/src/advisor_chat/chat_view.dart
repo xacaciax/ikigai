@@ -50,10 +50,10 @@ class _ChatViewState extends State<ChatView> {
   /// Periodically check the length of this and compress to be less than 2048 tokens
   String summaries = '';
 
-  /// When [AdvisoryPhase.surveys] is reached, this count determines which survey to generate
+  /// When [AdvisoryPhase.surveys] is reached, this count determines which survey to generate and display
   int _surveyCount = 3;
 
-  /// Determines whether or not to display suggestions intro message.
+  /// Determines whether or not to display suggestions intro message
   bool suggestionsProvided = false;
 
   @override
@@ -101,9 +101,7 @@ class _ChatViewState extends State<ChatView> {
       if (json['generated_suggestions'] != null) {
         setState(() {
           messages.add(ChatMessage(
-            messageContent: suggestionsProvided
-                ? 'Take a look at these and let me know what you think.'
-                : SUGGESTIONS_INTRO,
+            messageContent: SUGGESTIONS_INTRO,
             timestamp: DateFormat('hh:mm a').format(DateTime.now()),
             isMe: false,
           ));
@@ -124,7 +122,7 @@ class _ChatViewState extends State<ChatView> {
           });
         }
         setState(() {
-          summaries += 'suggested so far: $forSummaries';
+          summaries += ' Suggested so far: $forSummaries';
         });
 
         // TODO handle other kinds of message types here.
@@ -165,9 +163,6 @@ class _ChatViewState extends State<ChatView> {
     print('Current summaries: $summaries');
     print('Suggestions provided: $suggestionsProvided');
 
-    /// Sometimes the advisor asks a question, the user responds but then the advisor's next response lacks context
-    final lastAdvisorResponse = messages.last.messageContent;
-
     setState(() {
       _maxInteractions--;
       messages.add(ChatMessage(
@@ -177,30 +172,23 @@ class _ChatViewState extends State<ChatView> {
       ));
     });
     _textController.clear();
-
     _postFrameScrollToBottom();
-    developer.log('Interaction count is $_maxInteractions');
+
     if (_maxInteractions <= 0) {
       checkIn();
       _postFrameScrollToBottom();
       return;
     }
 
-    /// Send user message to OpenAI for completion
+    /// Sometimes the advisor asks a question, the user responds but then the advisor's next response lacks context
+    final lastAdvisorResponse = messages.last.messageContent;
     final context = suggestionsProvided ? summaries : '';
     await _openai.requestCompletion(
       userPrompt: text,
       systemPrompt:
           '${advisoryPrompts[discussionPhase.name] as String} here is the last response you gave me $lastAdvisorResponse and a summary of the previous conversations $context',
     );
-    // TODO add delay here to account for text animation, fix jank
-    _postFrameScrollToBottom();
-  }
-
-  void _postFrameScrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
+    _postFrameScrollToBottom(ANIMATED_TEXT_OFFSET);
   }
 
   /// After some number of interactions, the advisor checks in with the user to see if they are ready for career suggestions
@@ -217,10 +205,10 @@ class _ChatViewState extends State<ChatView> {
     });
   }
 
+  /// Orchestrates the survey phase of the conversation, based on [_surveyCount] displays 1 of 3 dynamic surveys and
+  /// saves results to [_surveyResults] for future use as additional context to be added to [summaries]
   void surveyHandler(List<String> selectedOptions) {
-    developer.log(_surveyCount.toString());
     if (_surveyCount > 0) {
-      final String allSelected = selectedOptions.map((s) => s).join(' ');
       switch (_surveyCount) {
         case 3:
           setState(() {
@@ -231,21 +219,25 @@ class _ChatViewState extends State<ChatView> {
               isMe: false,
             ));
           });
-          getSurvey(allSelected, SurveyType.interests);
+          _postFrameScrollToBottom(ANIMATED_TEXT_OFFSET);
+          getSurvey(summaries, SurveyType.interests);
           break;
         case 2:
-          getSurvey(summaries + allSelected, SurveyType.strengths);
+          getSurvey(summaries, SurveyType.strengths);
           break;
         case 1:
-          getSurvey(summaries + allSelected, SurveyType.careerValues);
+          getSurvey(summaries, SurveyType.careerValues);
           break;
         default:
-          getSurvey(summaries + allSelected, SurveyType.interests);
+          getSurvey(summaries, SurveyType.interests);
       }
+      final String surveyResult = selectedOptions.map((s) => s).join(' ');
       setState(() {
         _surveyCount--;
-        _surveyResults.add(allSelected);
+        _surveyResults.add(surveyResult);
       });
+
+      /// All surveys have been completed
     } else if (_surveyCount == 0) {
       final String surveyResults = _surveyResults.map((r) => r).join(' ');
       setState(() {
@@ -255,12 +247,11 @@ class _ChatViewState extends State<ChatView> {
 
       /// Use survey results to pick up with exploring via questions again
       _openai.requestCompletion(
-        userPrompt:
-            'I just took three surveys and these were the results $surveyResults',
+        userPrompt: 'Here are the results of the surveys $surveyResults.',
         systemPrompt:
-            '${advisoryPrompts[discussionPhase.name] as String} survey results $surveyResults and summary of the previous conversations $summaries for context',
+            '${advisoryPrompts[discussionPhase.name] as String} summary of the previous conversations $summaries for context and the results of surveys $surveyResults.',
       );
-      _postFrameScrollToBottom();
+      _postFrameScrollToBottom(ANIMATED_TEXT_OFFSET);
 
       /// Add survey results to summaries to keep for future context
       saveSummary(surveyResults);
@@ -286,7 +277,7 @@ class _ChatViewState extends State<ChatView> {
       /// pass [allMessages] to the system prompt instead of [summaries].
       await saveSummary(allMessages);
       final systemPrompt =
-          '${advisoryPrompts[AdvisoryPhase.questions.name] as String} and we already discussed $summaries so now let us continue the conversation.';
+          '${advisoryPrompts[AdvisoryPhase.questions.name] as String} and we already discussed $summaries so now let us discuss the results.';
       _openai.requestCompletion(
         userPrompt: userNotReady,
         systemPrompt: systemPrompt,
@@ -310,7 +301,7 @@ class _ChatViewState extends State<ChatView> {
     });
   }
 
-  /// Uses [messages] and [summaries] to generate a summary of the conversation so far,
+  /// Uses [currentMessages] and [summaries] to generate a summary of the conversation so far,
   /// having the effect of compressing the chat history
   Future<void> saveSummary(String currentMessages) async {
     String? summary = await _openai.requestSummaryCompletion(
@@ -327,6 +318,7 @@ class _ChatViewState extends State<ChatView> {
     );
   }
 
+  /// Gets career suggestions which will then be displayed as contact cards in the chat thread
   void suggest(String currentMessages) async {
     _openai.requestJsonCompletion(
       userPrompt: userReady,
@@ -338,23 +330,27 @@ class _ChatViewState extends State<ChatView> {
     );
   }
 
+  /// Gets Json for survey [SurveyType] using [currentContext] of conversation
   void getSurvey(String currentContext, SurveyType type) async {
     final String surveyPrompt = surveyPrompts[type.name] as String;
-    developer.log('Survey prompt: $surveyPrompt');
     _openai.requestJsonCompletion(
       userPrompt: 'Here is a summary of our discussion $currentContext.',
       systemPrompt: surveyPrompt,
     );
   }
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
+  void _postFrameScrollToBottom([int? offset]) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        final max = _scrollController.position.maxScrollExtent;
+        final position = offset == null ? max : max + offset;
+        _scrollController.animateTo(
+          position,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   ListTile errorTile() {
@@ -414,7 +410,6 @@ class _ChatViewState extends State<ChatView> {
                           contactProfession: msg.additionalData?.careerTitle ??
                               'mock career title',
                           onTap: () {
-                            // Handle contact card tap
                             developer.log('Contact tapped');
                           },
                         ),
@@ -441,6 +436,7 @@ class _ChatViewState extends State<ChatView> {
                           child: msg.isMe
                               ? Text(msg.messageContent)
                               // Only the last message will be animated
+                              // TODO do not re-animate on re-render
                               : index == messages.length - 1
                                   ? AnimatedTextKit(
                                       onFinished: _postFrameScrollToBottom,

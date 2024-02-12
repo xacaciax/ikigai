@@ -66,7 +66,7 @@ class _ChecklistSelectSurveyState extends State<ChecklistSelectSurvey> {
                   itemCount: widget.surveyOptions.length,
                   itemBuilder: (context, index) {
                     return ExpansionTile(
-                      initiallyExpanded: index == 0,
+                      initiallyExpanded: true,
                       title: Text(widget.surveyOptions[index].areaOfInterest),
                       children: widget.surveyOptions[index].subInterests
                           .map((child) => CheckboxListTile(
