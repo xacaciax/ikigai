@@ -75,4 +75,4 @@ const String userNeedsSurvey =
 const String systemRequestSummary =
     'You write succinct and concise summaries of chat conversations, the fewer words the better.'; // to minimize token usage
 const String requestSummary =
-    'Based on this conversation and previous summary, write a summary of this high school student\'s interests, values, and capabilities in about 50 words.';
+    'Based on this conversation and previous summary, write a summary of this high school student\'s interests, values, and capabilities in about 100 words.';

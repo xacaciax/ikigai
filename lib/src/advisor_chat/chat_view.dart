@@ -99,20 +99,20 @@ class _ChatViewState extends State<ChatView> {
       // It may be possible this data will not arrive in the shape we expect. There is a way via the openai function_calls
       // to ensure the data here is exactly as we expect. Stretch goal: implement function_calls.
       if (json['generated_suggestions'] != null) {
-        if (!suggestionsProvided) {
-          setState(() {
-            messages.add(ChatMessage(
-              messageContent: SUGGESTIONS_INTRO,
-              timestamp: DateFormat('hh:mm a').format(DateTime.now()),
-              isMe: false,
-            ));
-          });
-        }
+        // if (!suggestionsProvided) {
+        setState(() {
+          messages.add(ChatMessage(
+            messageContent: SUGGESTIONS_INTRO,
+            timestamp: DateFormat('hh:mm a').format(DateTime.now()),
+            isMe: false,
+          ));
+        });
+        // }
         String forSummaries = '';
         final options = json['generated_suggestions'] as List;
         for (var e in options) {
           final option = Suggestion.fromJson(e);
-          forSummaries += option.careerTitle;
+          forSummaries += ', ${option.careerTitle}';
           setState(() {
             messages.add(ChatMessage(
               messageContent: '',
