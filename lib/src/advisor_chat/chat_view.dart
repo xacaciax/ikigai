@@ -233,11 +233,11 @@ class _ChatViewState extends State<ChatView> {
           getSurvey(context, SurveyType.interests);
           break;
         case 2:
-          getSurvey(context, SurveyType.strengths);
+          // For initial career values survey, do not include full context yet so as to start with broad values
+          getSurvey('', SurveyType.careerValues);
           break;
         case 1:
-          // For initial career values survey, do not include full context yet so as to start with broad values
-          getSurvey(summaries, SurveyType.careerValues);
+          getSurvey(context, SurveyType.strengths);
           break;
         default:
           getSurvey(context, SurveyType.interests);
